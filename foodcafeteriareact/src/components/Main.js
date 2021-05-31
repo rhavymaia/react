@@ -1,23 +1,49 @@
 import React from 'react';
+import Food from './Food';
 
-const food = {
+const cafe = {
   name: 'Café',
-  image: 'image/cafe.jpg',
+  image: './images/cafe.jpg',
   description: 'Descrição',
 };
 
+const suco = {
+  name: 'Suco',
+  image: './images/suco.jpg',
+  description: 'Descrição',
+};
+
+const fritas = {
+  name: 'Suco',
+  image: './images/fritas.jpg',
+  description: 'Descrição',
+};
+
+const foods = [cafe, suco, fritas];
+
 const Main = () => {
   return (
-    <div>
+    <>
+      <h1 className="mt-5 text-center">Cardápio</h1>
+
       <div>
-        <img src={food.image} class="card-img-top" alt="..." />
-        <div>
-          <h5>{food.name}</h5>
-          <p>{food.description}</p>
-          <a href="#">Adicionar</a>
-        </div>
+        <button
+          type="button"
+          name="addFood"
+          className="btn btn-primary rounded-circle fw-bold"
+          data-bs-toggle="modal"
+          data-bs-target="#foodModal"
+        >
+          +
+        </button>
       </div>
-    </div>
+
+      <div className="row" id="itens">
+        {foods.map(function (food) {
+          return <Food food={food} />;
+        })}
+      </div>
+    </>
   );
 };
 

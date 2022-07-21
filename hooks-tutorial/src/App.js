@@ -1,12 +1,18 @@
+import { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 
 function App() {
   const URL_BASE = 'http://localhost:3000';
 
-  function handleClick(event) {
+  let [disciplinas, setDisciplinas] = useState([]);
+
+  let [nome, setNome] = useState('');
+
+  useEffect(() => {
+    console.log('Ao carregar a página');
     console.log('Funcionou essa cebola!');
-    let jsonDisciplinas = fetch(URL_BASE + '/disciplinas')
+    let disciplinasPromisse = fetch(URL_BASE + '/disciplinas')
       .then((response) => {
         console.log('Deu certo!');
         return response.json();
@@ -17,19 +23,52 @@ function App() {
         return Promise.reject();
       });
 
-    console.log(jsonDisciplinas);
-    jsonDisciplinas.then((data) => {
+    console.log(disciplinasPromisse);
+    disciplinasPromisse.then((data) => {
       console.log('Manipulando o JSON!');
-      console.log(data);
+      setDisciplinas(data);
     });
+  }, []);
+
+  function handleClick(event) {
+    // Montar a URL da requisição.
+    let URL_REQUISICAO = URL_BASE + '/disciplinas?nome=' + nome;
+    // Fazer a requisição.
+    let disciplinasPromisse = fetch(URL_REQUISICAO)
+      .then((response) => {
+        return response.json();
+      })
+      .catch();
+
+    // Obter a resposta e atribuir os valores a tabela.
+    disciplinasPromisse.then((data) => {
+      setDisciplinas(data);
+    });
+  }
+
+  function handleChange(event) {
+    let value = event.target.value;
+    console.log(value);
+    setNome(value);
   }
 
   return (
     <div>
       <h1>Listagem das disciplinas</h1>
-      <Button variant="primary" onClick={handleClick}>
-        Listar
-      </Button>
+
+      <form>
+        <label htmlFor="nome">Nome</label>
+        <input
+          type="text"
+          name="nome"
+          id="nome"
+          value={nome}
+          onChange={handleChange}
+        />
+        <Button variant="primary" onClick={handleClick}>
+          Pesquisar
+        </Button>
+      </form>
 
       <Table striped bordered hover>
         <thead>
@@ -41,12 +80,16 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Linguagem de Script</td>
-            <td>Rhavy Maia Guedes</td>
-            <td>67h</td>
-          </tr>
+          {disciplinas.map((disciplina) => {
+            return (
+              <tr key={disciplina.id}>
+                <td>{disciplina.id}</td>
+                <td>{disciplina.nome}</td>
+                <td>{disciplina.professor}</td>
+                <td>{disciplina.ch}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </Table>
     </div>
